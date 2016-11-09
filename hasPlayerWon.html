@@ -1,0 +1,90 @@
+<script type="text/javascript"> 
+
+// takes a 3x3 array plus the integer playerValue (1 or -1)
+// and returns true if 3 in a row, column or diagonal 
+
+// *** START FUNCTION - copy from here ***
+
+function hasPlayerWon (boardStateArray, playerValue) {
+
+	// winning score = 3 * player value (3 in a row)
+	var winningScore = 3 * playerValue;
+
+	// *** ROWS ***
+	// iterate through rows, [[i=0],[i=1],[i=2]]
+	for (var i = 0; i < boardStateArray.length; i++) {
+		// if row adds up to 3 * player value, has won, return true
+		if (boardStateArray[i].reduce(function (a, b) {
+				return a + b;
+				}) === winningScore) {
+			return true;
+		}
+	}
+
+	// *** COLUMNS ***
+	// iterate through columns [j][i] - eg [0][0] + [1][0] + [2][0] 
+	var currentScore = 0
+	// iterate through inner array for second index
+	for (i = 0; i < boardStateArray[0].length; i++) {
+		// reset column score for new column
+		currentScore = 0
+		// iterate through outer array for first index
+		for (var j = 0; j < boardStateArray.length; j++) {
+			currentScore += boardStateArray[j][i];
+		}
+		// Does column sum to 3 * player value? if so return true.
+		if (currentScore === winningScore) {
+			return true;
+		}
+
+	}
+
+	// *** DIAGONALS ***
+
+	// FORWARD DIAGONAL
+	var diagonalSum = boardStateArray[0][0] + boardStateArray[1][1] + boardStateArray[2][2];
+	if (diagonalSum === winningScore) {
+		return true;
+	}
+
+	// REVERSE DIAGONAL
+	diagonalSum = boardStateArray[0][2] + boardStateArray[1][1] + boardStateArray[2][0];
+	if (diagonalSum === winningScore) {
+		return true;
+	}
+	// if not won yet, no three in a rows, return false
+	return false;
+}
+
+//*** END FUNCTION - copy to here ***
+
+// put board values to play with here:
+var boardStateArray = [[1,0,-1],[0,0,-1],[0,0,1]];
+// see result
+alert(hasPlayerWon(boardStateArray, 1));
+
+// TEST CASES *** ALL TESTED BY JOE - PASSED ***
+
+// winning rows *** TESTED BY JOE - WORKS ***
+//var rowTest = [[1,1,1],[0,0,0],[-1,-1,-1]];
+// winning columns *** TESTED BY JOE - WORKS ***
+//var columnTest = [[1,-1,0],[1,-1,0],[1,-1,0]];
+// winning forward diagonal *** TESTED BY JOE - WORKS ***
+//var diagonalTest1 = [[1,-1,0],[-1,1,0],[0,-1,1]];
+// winning reverse diagonal *** TESTED BY JOE - WORKS ***
+//var diagonalTest2 = [[1,0,-1],[1,-1,0],[-1,1,0]];
+// no winner *** TESTED BY JOE - WORKS ***
+//var falseTest = [[1,0,1],[0,-1,0],[1,0,-1]];
+
+// tests of functionality - uncomment to test
+//alert(hasPlayerWon(rowTest, 1)); // should be true - winning X row
+//alert(hasPlayerWon(rowTest, -1)); // should be true - winning O row
+//alert(hasPlayerWon(columnTest, 1)); // should be true - winning X column
+//alert(hasPlayerWon(columnTest, -1)); // should be true - winning O column
+//alert(hasPlayerWon(diagonalTest1, 1)); // should be true - winning X forward diagonal 
+//alert(hasPlayerWon(diagonalTest2, -1)); // should be true - winning X reverse diagonal 
+//alert(hasPlayerWon(falseTest, -1)); // should be false - no winner
+//alert(hasPlayerWon(rowTest, 2)); // should be false - non-existent player value
+
+
+</script>
