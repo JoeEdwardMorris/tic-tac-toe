@@ -1,0 +1,66 @@
+<script type="text/javascript"> 
+// Function for placing a piece in an empty corner square
+
+// takes a 3x3 array 'boardStateArray'
+// and the integer 'playerValue' (1 or -1)
+// Searches all corner spaces for an empty square 
+
+function strategy7EmptyCorner (boardStateArray, playerValue) {
+
+	// TODO Might be nice if we can make this more elegant :)
+
+	if (boardStateArray[0][0] === 0) {
+		boardStateArray[0][0] = playerValue;
+		return boardStateArray;
+	}
+
+	if (boardStateArray[0][2] === 0) {
+		boardStateArray[0][2] = playerValue;
+		return boardStateArray;
+	}
+
+	if (boardStateArray[2][0] === 0) {
+		boardStateArray[2][0] = playerValue;
+		return boardStateArray;
+	}
+
+	if (boardStateArray[2][2] === 0) {
+		boardStateArray[2][2] = playerValue;
+		return boardStateArray;
+	}
+
+	return boardStateArray	
+
+}
+
+//*** END FUNCTION - copy to here ***
+
+// put board values to play with here:
+var boardStateArray = [[1,1,1],[1,0,1],[0,0,0]];
+// see result
+alert(strategy7EmptyCorner(boardStateArray, -1));
+
+// TEST CASES *** ALL TESTED BY JOE - PASSED ***
+
+// winning rows *** TESTED BY JOE - WORKS ***
+//var rowTest = [[1,1,0],[0,0,0],[-1,0,-1]];
+// winning columns *** TESTED BY JOE - WORKS ***
+//var columnTest = [[1,-1,0],[1,0,0],[0,-1,0]];
+// winning forward diagonal *** TESTED BY JOE - WORKS ***
+//var diagonalTest1 = [[1,-1,0],[-1,1,0],[0,-1,0]];
+// winning reverse diagonal *** TESTED BY JOE - WORKS ***
+//var diagonalTest2 = [[1,0,-1],[1,0,0],[-1,1,0]];
+// no result *** TESTED BY JOE - WORKS ***
+//var falseTest = [[1,0,1],[-1,0,0],[1,0,-1]];
+
+// tests of functionality - uncomment to test
+//alert(strategy1Win(rowTest, 1)); // should =[[1,1,1],[0,0,0],[-1,0,-1]]
+//alert(strategy1Win(rowTest, -1)); // should =[[1,1,0],[0,0,0],[-1,-1,-1]]
+//alert(strategy1Win(columnTest, 1));//should =[[1,-1,0],[1,0,0],[1,-1,0]]
+//alert(strategy1Win(columnTest, -1)); // [[1,-1,0],[1,-1,0],[0,-1,0]]
+//alert(strategy1Win(diagonalTest1, 1)); // [[1,-1,0],[-1,1,0],[0,-1,1]] 
+//alert(strategy1Win(diagonalTest2, -1)); // [[1,0,-1],[1,-1,0],[-1,1,0]] 
+//alert(strategy1Win(falseTest, -1)); // [[1,0,1],[-1,0,0],[1,0,-1]]
+
+
+</script>
