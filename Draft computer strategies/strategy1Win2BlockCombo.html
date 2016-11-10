@@ -17,9 +17,9 @@
 
 function strategy1Win2BlockCombo (boardStateArray, playerValue, flag) {
 
-	// desired score = 2 * opponent player value (2 in a row)
+	// desired score = 2 * player or opponent value (2 in a row)
 	// multiplying by -1 gets us the opponents player value
-	var targetScore = 2 * (playerValue*flag);
+	var targetScore = 2 * (playerValue * flag);
 
 	// *** ROWS ***
 	// iterate through rows, [[i=0],[i=1],[i=2]]

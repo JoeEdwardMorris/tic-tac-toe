@@ -1,0 +1,213 @@
+<script type="text/javascript"> 
+
+// takes a 3x3 array plus the integer playerValue (1 or -1),
+// an integer 'flag' - can be 1 for 'WIN' move or -1 for 'BLOCK'
+// & a boolean 'fork'.
+
+// FLAG = 1 finds two rows, columns or diagonals each with 1 in a row
+// and no opposing pieces, then place piece in the shared square
+
+// FLAG = - 1 finds two rows, columns or diagonals each with 1 in a row
+// of opposing pieces and no player pieces, then places piece in the 
+// shared square to block opponents ability to create a fork.
+
+// FORK decides whether we are looking for two sets of '1 in a row' 
+// to create a fork - in which case 'true' - or just one set of 
+// '1 in a row' to make a two in a row which will force the opponent
+// to block, in which case false. 
+ 
+// FLAG and FORK allow the function to be used three times - 
+
+// i)	set up a fork : 
+// 		FLAG = 1, FORK = TRUE
+
+// ii)	block an opponents' forking opportunity
+// 		FLAG = -1 (FORK value unused)
+
+// iii) to set up a 2 in a row if there is no opponents'
+// 		forking opportunity to block. 
+// 		FLAG = 1, FORK = FALSE
+
+// THIS IS A TRICKY ONE!
+
+// Ideas - push co-ordinates of empty squares each time we find
+// a row of one. After all searches are completed, 
+// all we need to do is find two sets of coordinates 
+// that match and we have our shared square.
+// we then use the shared coordinates to place a piece.
+
+// POTENTIAL PITFALLS - two configurations of pieces add to 'playerValue'
+// • One player piece and no opponent pieces (what we are looking for)
+// • Two player pieces and one opponent piece (we need to ignore these)
+// Hence we need to do an additional check and ignore the second case
+
+// *** START FUNCTION - copy from here ***
+
+function strategy3Fork4BlockCombo (boardStateArray, playerValue, flag, fork) {
+
+	// desired score = 1 * player value (1 in a row)
+	var targetScore = playerValue * flag;
+	var opponent = playerValue * -1 * flag;
+	// initialise target coordinates
+	var targetCoordinates = [];
+	// initialise final coordinates
+	var finalCoordinates = [];
+	// flag to indicate if opponent found in each search
+	// so we can ignore that search if so.
+	var opponentFound = false;
+	// *** ROWS ***
+	// iterate through rows, [[i=0],[i=1],[i=2]]
+	for (var i = 0; i < boardStateArray.length; i++) {
+		// if row adds up to player value...
+		if (boardStateArray[i].reduce(function (a, b) {
+				return a + b;
+				}) === targetScore) {
+			// iterate through row looking for opponent squares.
+			// if found, we know to skip the search for empty
+			// squares that follows. Reset flag first.
+			opponentFound = false
+			for (var j = 0; j < boardStateArray[i].length; j++) {
+				if (boardStateArray[i][j] === opponent) {
+					opponentFound = true;
+					break;
+				}
+			}
+			// if no opponent found, push co-ordinates of
+			// empty spaces to co-ordinate array
+			if (opponentFound === false) {
+				// iterate through row looking for empty spaces
+				// If found, push i & j to target coordinates 
+				for (var j = 0; j < boardStateArray[i].length; j++) {
+					if (boardStateArray[i][j] === 0) {
+						targetCoordinates.push([i,j]);
+					}
+				}					
+			}
+			
+		}
+	}
+
+	// *** COLUMNS ***
+	// iterate through columns [j][i] - eg [0][0] + [1][0] + [2][0] 
+	var currentScore = 0
+	// iterate through inner array for second index
+	for (i = 0; i < boardStateArray[0].length; i++) {
+		// reset column score for new column
+		currentScore = 0
+		// iterate through outer array for first index
+		for (j = 0; j < boardStateArray.length; j++) {
+			// add current element to column score
+			currentScore += boardStateArray[j][i];
+		}
+		// Does column sum to 1 * player value?
+		if (currentScore === targetScore) {
+			// Look through column for opponent squares
+			// if found, we know to skip the search for empty
+			// squares that follows. Reset flag first.
+			opponentFound = false;
+			for (var k = 0; k < boardStateArray.length; k++) {
+				if (boardStateArray[k][i] === opponent) {
+					opponentFound = true;
+					break;
+				}
+			}
+			// if no opponent found, push co-ordinates of
+			// empty spaces to co-ordinate array
+			if (opponentFound === false) {
+				// iterate through row looking for empty spaces
+				// If found, push k & i to target coordinates 
+				for (k = 0; k < boardStateArray.length; k++) {
+					if (boardStateArray[k][i] === 0) {
+						targetCoordinates.push([k,i]);
+					}
+				}
+			}							
+		}
+
+	}
+
+	// *** DIAGONALS ***
+
+	// FORWARD DIAGONAL
+	var diagonalSum = boardStateArray[0][0] + boardStateArray[1][1] + boardStateArray[2][2];
+
+	if (diagonalSum === targetScore) {
+		// search for opponent piece, if found break
+		opponentFound = false;
+		for (i = 0; i < boardStateArray.length; i++) {
+			if (boardStateArray[i][i] === opponent) {
+				opponentFound = true;
+				break;
+			}
+		}
+		// If no opponent piece found, push position of empty spaces
+		if (opponentFound === false) {
+			for (i = 0; i < boardStateArray.length; i++) {
+				if (boardStateArray[i][i] === 0) {
+					targetCoordinates.push([i,i]);
+				}
+			}			
+		}
+		
+	}
+
+	// REVERSE DIAGONAL
+	diagonalSum = boardStateArray[0][2] + boardStateArray[1][1] + boardStateArray[2][0];
+
+	if (diagonalSum === targetScore) {
+		// search for opponent piece, if found break
+		opponentFound = false;
+		for (i = 0; i < boardStateArray.length; i++) {
+			if (boardStateArray[i][2-i] === opponent) {
+				opponentFound = true;
+				break;
+			}
+		}
+		// If no opponent piece found, push position of empty spaces
+		if (opponentFound === false) {
+			for (i = 0; i < boardStateArray.length; i++) {
+				if (boardStateArray[i][2-i] === 0) {
+					targetCoordinates.push([i,2-i]);
+				}
+			}			
+		}
+		
+	}
+	//alert(targetCoordinates);		
+	//search through co-ordinates for match
+	// iterate through first three co-ordinate sets
+	for (i = 0; i < targetCoordinates.length-1; i++) {
+		// iterate through remaining sets (starting at i+1)
+		for (j = i + 1; j < targetCoordinates.length-1; j++) {
+			// if both co-ord sets match, place piece and exit
+			if (targetCoordinates[i][0] === targetCoordinates[j][0]) {
+				if (targetCoordinates[i][1] === targetCoordinates[j][1]) {
+					boardStateArray[targetCoordinates[i][0]][targetCoordinates[i][1]] = playerValue;
+					return boardStateArray;
+				}
+			}	
+
+		}
+	}
+	// if we aren't worried about looking for a fork
+	// and we have at least one set of co-ordinates, place piece
+	// at first set of co-ordinates.
+	if (flag === 1 && fork === false && targetCoordinates.length > 0) {
+		boardStateArray[targetCoordinates[0][0]][targetCoordinates[0][1]] = playerValue;
+		return boardStateArray;
+	} 
+
+	// if no valid fork/block or 2 in a row possibility found
+	// return array unchanged
+	return boardStateArray;
+}
+
+//*** END FUNCTION - copy to here ***
+
+// put board values to play with here:
+var boardStateArray = [[0,0,0],[-1,0,0],[1,0,0]];
+// see result
+alert(strategy3Fork4BlockCombo(boardStateArray, -1, 1, false));
+
+
+</script>
