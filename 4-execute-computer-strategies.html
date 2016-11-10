@@ -1,12 +1,12 @@
 <script type="text/javascript"> 
 
-var boardStateArray = [[0,0,-1],[0,1,0],[-1,0,1]];
+var boardStateArray = [[1,1,-1],[0,-1,0],[1,0,0]];
 // see result
-alert(computerStrategies(boardStateArray, -1));
+alert(computerStrategies(boardStateArray, 1, 3));
 
 // all computer strategies in one function to execute once per turn
 
-function computerStrategies (boardStateArray, playerValue) {
+function computerStrategies (boardStateArray, playerValue, turn) {
 
 	// initialise flag that alerts functions to skip once a move has been made
 	var moveMadeYet = false;
@@ -285,7 +285,10 @@ function computerStrategies (boardStateArray, playerValue) {
 	function strategy5Centre (boardStateArray, playerValue) {
 
 		// skip function if move made already
-		if (moveMadeYet === true) {return boardStateArray;}
+		// also skip if first turn. a corner first move
+		// is better against an imperfect player
+		// as more chance to make mistakes.
+		if (moveMadeYet === true || turn === 1) {return boardStateArray;}
 
 		if (boardStateArray[1][1] === 0) {
 			boardStateArray[1][1] = playerValue;
